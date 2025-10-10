@@ -31793,7 +31793,7 @@ async function run() {
     await new Promise(resolve => setTimeout(resolve, 5000)); 
     
     // Verify status
-    const status = await executeCommand('sudo warp-cli status');
+    const status = await executeCommand('sudo warp-cli --accept-tos status');
     core.info("--- WARP Status ---");
     core.info(status);
     core.info("-------------------");

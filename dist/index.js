@@ -31753,6 +31753,7 @@ async function run() {
 
 
     // --- 2. Generate and Write MDM Configuration File ---
+    core.info("Generating MDM File")
     const mdm_folder = '/var/lib/cloudflare-warp/';
     const mdm_file = mdm_folder + 'mdm.xml';
     const temp_mdm_file = `/tmp/mdm.xml`;
@@ -31789,8 +31790,6 @@ async function run() {
 
     await executeCommand(`sudo warp-cli --accept-tos settings`);
     
-    await executeCommand(`sudo ip addr`);
-    await executeCommand(`sudo ip route`);
     // // CRITICAL FIX: Explicitly initiate registration. This resolves the 'Registration Missing' error.
     await executeCommand(`sudo warp-cli --accept-tos registration new`);
     
@@ -31799,7 +31798,7 @@ async function run() {
 
     await executeCommand(`sudo warp-cli --accept-tos status`);
 
-    await new Promise(resolve => setTimeout(resolve, 15000)); 
+    await new Promise(resolve => setTimeout(resolve, 10000)); 
     // Verify status
     const status = await executeCommand(`sudo warp-cli --accept-tos status`);
     core.info("--- WARP Status ---");
@@ -31807,15 +31806,16 @@ async function run() {
     core.info("-------------------");
     
     if (!status.includes("Status: Connected")) {
-      // throw new Error("WARP client failed to connect.");
       core.info("WARP client failed to connect.");
       await new Promise(resolve => setTimeout(resolve, 5000)); 
       await executeCommand(`sudo warp-cli --accept-tos status`);
     } else {
       core.info("WARP client connected successfully.");
+      core.setOutput("warp-status", "Connected");
     }
+    
+    await executeCommand(`sudo ip addr`);
 
-    // core.setOutput("warp-status", "Connected");
     core.info("Cloudflare WARP Zero Trust connection successful!");
 
   } catch (error) {

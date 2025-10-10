@@ -31746,8 +31746,8 @@ async function run() {
     await executeCommand('echo "deb [arch=amd64 signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com/ $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/cloudflare-warp.list');
     
     // Update package lists and install
-    await executeCommand('sudo apt update');
-    await executeCommand('sudo apt install -y cloudflare-warp');
+    await executeCommand('sudo apt-get update');
+    await executeCommand('sudo apt-get install -y cloudflare-warp');
 
     core.info("Cloudflare WARP client installed successfully.");
 
@@ -31755,6 +31755,7 @@ async function run() {
     // --- 2. Generate and Write MDM Configuration File ---
     const mdm_folder = '/var/lib/cloudflare-warp/';
     const mdm_file = mdm_folder + 'mdm.xml';
+    const temp_mdm_file = `/tmp/mdm.xml`;
 
     // The MDM configuration file content
     const mdm_xml_content = `
@@ -31772,7 +31773,9 @@ async function run() {
     await promises_namespaceObject.mkdir(mdm_folder, { recursive: true });
     
     // Write the MDM configuration file
-    await promises_namespaceObject.writeFile(mdm_file, mdm_xml_content.trim(), 'utf8');
+    await promises_namespaceObject.writeFile(temp_mdm_file, mdm_xml_content.trim(), 'utf8');
+    await executeCommand(`sudo mv ${temp_mdm_file} ${mdm_file}`);
+
     core.info(`MDM configuration written to ${mdm_file}.`);
 
     // --- 3. Configure and Connect WARP ---

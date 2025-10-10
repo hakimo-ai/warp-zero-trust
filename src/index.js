@@ -89,13 +89,13 @@ async function run() {
     await executeCommand(`sudo warp-cli --accept-tos settings`);
     
     // // CRITICAL FIX: Explicitly initiate registration. This resolves the 'Registration Missing' error.
-    // await executeCommand('sudo warp-cli --accept-tos registration new');
+    await executeCommand('sudo warp-cli --accept-tos registration new');
     
     // // Connect the client
-    // await executeCommand('sudo warp-cli --accept-tos connect');
+    await executeCommand('sudo warp-cli --accept-tos connect');
 
     // Wait for the connection to be fully established (optional, but safer)
-    await new Promise(resolve => setTimeout(resolve, 5000)); 
+    await new Promise(resolve => setTimeout(resolve, 20000)); 
     
     // Verify status
     const status = await executeCommand('sudo warp-cli --accept-tos status');
@@ -106,14 +106,11 @@ async function run() {
     if (!status.includes("Status: Connected")) {
       // throw new Error("WARP client failed to connect.");
       core.info("WARP client failed to connect.");
-      await executeCommand('sudo warp-cli --accept-tos registration new');
-      await executeCommand('sudo warp-cli --accept-tos connect');
       await new Promise(resolve => setTimeout(resolve, 5000)); 
       await executeCommand('sudo warp-cli --accept-tos status');
-  
     }
 
-    core.setOutput("warp-status", "Connected");
+    // core.setOutput("warp-status", "Connected");
     core.info("Cloudflare WARP Zero Trust connection successful!");
 
   } catch (error) {

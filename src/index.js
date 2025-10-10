@@ -95,8 +95,10 @@ async function run() {
     await executeCommand('sudo warp-cli --accept-tos connect');
 
     // Wait for the connection to be fully established (optional, but safer)
-    await new Promise(resolve => setTimeout(resolve, 20000)); 
-    
+    await new Promise(resolve => setTimeout(resolve, 10000)); 
+    await executeCommand('sudo warp-cli --accept-tos status');
+
+    await new Promise(resolve => setTimeout(resolve, 10000)); 
     // Verify status
     const status = await executeCommand('sudo warp-cli --accept-tos status');
     core.info("--- WARP Status ---");

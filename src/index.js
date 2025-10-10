@@ -82,8 +82,8 @@ async function run() {
 
     await executeCommand(`sudo warp-cli --accept-tos settings`);
     
-    // // Switch to Zero Trust mode
-    // await executeCommand('sudo warp-cli mode zero_trust');
+    // CRITICAL FIX: Explicitly initiate registration. This resolves the 'Registration Missing' error.
+    await executeCommand('sudo warp-cli --accept-tos registration new');
     
     // Connect the client
     await executeCommand('sudo warp-cli --accept-tos connect');

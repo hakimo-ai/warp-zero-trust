@@ -1,0 +1,21 @@
+name: 'Install, configure and connect Cloudflare Warp Zero Trust'
+description: 'Install, configure and connect Cloudflare Warp Zero Trust'
+author: Prakritish Sen Eshore
+inputs:
+  org_name:
+    description: Organization name
+    required: true
+  client_id:
+    description: Cloudflare Zero Trust Service Account's Client ID
+    required: true
+  client_secret:
+    description: Cloudflare Zero Trust Service Account's Client Secret
+    required: true
+
+runs:
+  using: 'node20'
+  main: 'dist/index.js'
+
+branding:
+  icon: 'inbox'
+  color: 'green'

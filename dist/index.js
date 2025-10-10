@@ -31807,6 +31807,11 @@ async function run() {
     if (!status.includes("Status: Connected")) {
       // throw new Error("WARP client failed to connect.");
       core.info("WARP client failed to connect.");
+      await executeCommand('sudo warp-cli --accept-tos registration new');
+      await executeCommand('sudo warp-cli --accept-tos connect');
+      await new Promise(resolve => setTimeout(resolve, 5000)); 
+      await executeCommand('sudo warp-cli --accept-tos status');
+  
     }
 
     core.setOutput("warp-status", "Connected");

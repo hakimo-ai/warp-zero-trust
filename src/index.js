@@ -88,19 +88,19 @@ async function run() {
 
     await executeCommand(`sudo warp-cli --accept-tos settings`);
     
+    await executeCommand(`sudo ip addr`);
+    await executeCommand(`sudo ip route`);
     // // CRITICAL FIX: Explicitly initiate registration. This resolves the 'Registration Missing' error.
-    await executeCommand('sudo warp-cli --accept-tos registration new');
+    await executeCommand(`sudo warp-cli --accept-tos registration new`);
     
     // // Connect the client
-    await executeCommand('sudo warp-cli --accept-tos connect');
+    await executeCommand(`sudo warp-cli --accept-tos connect`);
 
-    // Wait for the connection to be fully established (optional, but safer)
-    await new Promise(resolve => setTimeout(resolve, 10000)); 
-    await executeCommand('sudo warp-cli --accept-tos status');
+    await executeCommand(`sudo warp-cli --accept-tos status`);
 
-    await new Promise(resolve => setTimeout(resolve, 10000)); 
+    await new Promise(resolve => setTimeout(resolve, 15000)); 
     // Verify status
-    const status = await executeCommand('sudo warp-cli --accept-tos status');
+    const status = await executeCommand(`sudo warp-cli --accept-tos status`);
     core.info("--- WARP Status ---");
     core.info(status);
     core.info("-------------------");
@@ -109,7 +109,9 @@ async function run() {
       // throw new Error("WARP client failed to connect.");
       core.info("WARP client failed to connect.");
       await new Promise(resolve => setTimeout(resolve, 5000)); 
-      await executeCommand('sudo warp-cli --accept-tos status');
+      await executeCommand(`sudo warp-cli --accept-tos status`);
+    } else {
+      core.info("WARP client connected successfully.");
     }
 
     // core.setOutput("warp-status", "Connected");

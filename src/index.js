@@ -108,7 +108,7 @@ async function run() {
       core.info(`--- WARP Status (attempt ${attempt}) ---`);
       core.info(status);
       core.info(`----------------------------------------`);
-      if (status.includes("Status: Connected")) {
+      if (status.includes("Connected")) {
         connected = true;
         break;
       }

@@ -31796,26 +31796,34 @@ async function run() {
     // // Connect the client
     await executeCommand(`sudo warp-cli --accept-tos connect`);
 
-    await executeCommand(`sudo warp-cli --accept-tos status`);
+    // Poll until connected — WARP tunnel can take several seconds to establish.
+    // Retry up to 6 times with 5s gaps (30s total) before giving up.
+    const MAX_RETRIES = 6;
+    const RETRY_INTERVAL_MS = 5000;
+    let connected = false;
 
-    await new Promise(resolve => setTimeout(resolve, 10000)); 
-    // Verify status
-    const status = await executeCommand(`sudo warp-cli --accept-tos status`);
-    core.info("--- WARP Status ---");
-    core.info(status);
-    core.info("-------------------");
-    
-    if (!status.includes("Status: Connected")) {
-      core.info("WARP client failed to connect.");
-      await new Promise(resolve => setTimeout(resolve, 5000)); 
-      await executeCommand(`sudo warp-cli --accept-tos status`);
-    } else {
-      core.info("WARP client connected successfully.");
-      core.setOutput("warp-status", "Connected");
+    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+      core.info(`Waiting for WARP to connect... (attempt ${attempt}/${MAX_RETRIES})`);
+      await new Promise(resolve => setTimeout(resolve, RETRY_INTERVAL_MS));
+      const status = await executeCommand(`sudo warp-cli --accept-tos status`);
+      core.info(`--- WARP Status (attempt ${attempt}) ---`);
+      core.info(status);
+      core.info(`----------------------------------------`);
+      if (status.includes("Status: Connected")) {
+        connected = true;
+        break;
+      }
     }
-    
-    await executeCommand(`sudo ip addr`);
 
+    if (!connected) {
+      await executeCommand(`sudo ip addr`);
+      core.setFailed(`WARP client failed to connect after ${MAX_RETRIES} attempts.`);
+      return;
+    }
+
+    core.info("WARP client connected successfully.");
+    core.setOutput("warp-status", "Connected");
+    await executeCommand(`sudo ip addr`);
     core.info("Cloudflare WARP Zero Trust connection successful!");
 
   } catch (error) {

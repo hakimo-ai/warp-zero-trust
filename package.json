@@ -1,6 +1,6 @@
 {
   "name": "warp-zero-trust",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "description": "Cloudflare Warp Zero Trust Install, Configure and Connect",
   "main": "index.js",
